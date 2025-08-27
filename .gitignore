@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+npm-debug.log*
+pnpm-lock.yaml
+yarn.lock
+
+.env
+*.env.local
+dev.db
+*.db-journal
+prisma/dev.db
+.prisma/
+
+.DS_Store
+*.swp

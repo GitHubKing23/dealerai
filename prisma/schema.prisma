@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("owner")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  dealers   Dealer[]
+}
+
+model Dealer {
+  id        String    @id @default(cuid())
+  name      String
+  ownerId   String
+  owner     User      @relation(fields: [ownerId], references: [id])
+  phone     String?
+  siteUrl   String?
+  createdAt DateTime  @default(now())
+  vehicles  Vehicle[]
+  leads     Lead[]
+  bookings  Booking[]
+}
+
+model Vehicle {
+  id          String   @id @default(cuid())
+  dealerId    String
+  dealer      Dealer   @relation(fields: [dealerId], references: [id])
+  make        String
+  model       String
+  year        Int
+  price       Int
+  mileage     Int?
+  description String?
+  createdAt   DateTime @default(now())
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  dealerId  String
+  dealer    Dealer   @relation(fields: [dealerId], references: [id])
+  name      String?
+  email     String?
+  phone     String?
+  interest  String?
+  source    String?
+  createdAt DateTime @default(now())
+  messages  Message[]
+  bookings  Booking[]
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id])
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model Booking {
+  id        String   @id @default(cuid())
+  dealerId  String
+  dealer    Dealer   @relation(fields: [dealerId], references: [id])
+  leadId    String?
+  lead      Lead?    @relation(fields: [leadId], references: [id])
+  vehicle   String?
+  startsAt  DateTime
+  status    String   @default("scheduled")
+  createdAt DateTime @default(now())
+}
